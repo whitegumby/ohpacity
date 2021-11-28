@@ -1,0 +1,281 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model beatme {
+  id        Int           @id @default(autoincrement()) @db.UnsignedInt
+  createdAt DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt DateTime?     @db.Timestamp(0)
+  delete    beatme_delete @default(N)
+}
+
+model beatme_poll {
+  id        Int                @id @default(autoincrement()) @db.UnsignedInt
+  createdAt DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt DateTime?          @db.Timestamp(0)
+  delete    beatme_poll_delete @default(N)
+}
+
+model beatme_reply {
+  id        Int                 @id @default(autoincrement()) @db.UnsignedInt
+  createdAt DateTime            @default(now()) @db.Timestamp(0)
+  updatedAt DateTime?           @db.Timestamp(0)
+  delete    beatme_reply_delete @default(N)
+}
+
+model collab {
+  id                                Int           @id @default(autoincrement()) @db.UnsignedInt
+  createdAt                         DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt                         DateTime?     @db.Timestamp(0)
+  delete                            collab_delete @default(N)
+  user_id_request                   Int           @db.UnsignedInt
+  user_id_grant                     Int           @db.UnsignedInt
+  status                            collab_status @default(Pending)
+  user_collab_user_id_grantTouser   user          @relation("collab_user_id_grantTouser", fields: [user_id_grant], references: [id], onDelete: Cascade, map: "user_id_grant on collab")
+  user_collab_user_id_requestTouser user          @relation("collab_user_id_requestTouser", fields: [user_id_request], references: [id], onDelete: Cascade, map: "user_id_request on collab")
+
+  @@index([user_id_grant], map: "user_id_grant on collab")
+  @@index([user_id_request], map: "user_id_request on collab")
+}
+
+model comment {
+  id         Int            @id @default(autoincrement()) @db.UnsignedInt
+  createdAt  DateTime       @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime?      @db.Timestamp(0)
+  delete     comment_delete @default(N)
+  user_id    Int            @db.UnsignedInt
+  project_id Int            @db.UnsignedInt
+  rating     Int            @default(1)
+  comment    String         @db.Text
+  project    project        @relation(fields: [project_id], references: [id], onDelete: Cascade, map: "project_id on comment")
+  user       user           @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user_id on comment")
+
+  @@index([project_id], map: "project_id on comment")
+  @@index([user_id], map: "user_id on comment")
+}
+
+model feedback {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime?        @db.Timestamp(0)
+  delete         feedback_delete  @default(N)
+  project_id     Int              @db.UnsignedInt
+  resource_id    Int              @db.UnsignedInt
+  project        project          @relation(fields: [project_id], references: [id], onDelete: Cascade, map: "project_id on feedback")
+  resource       resource         @relation(fields: [resource_id], references: [id], onDelete: Cascade, map: "resource_id on feedback")
+  feedback_round feedback_round[]
+
+  @@index([project_id], map: "project_id on feedback")
+  @@index([resource_id], map: "resource_id on feedback")
+}
+
+model feedback_round {
+  id          Int                   @id @default(autoincrement()) @db.UnsignedInt
+  createdAt   DateTime              @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime?             @db.Timestamp(0)
+  delete      feedback_round_delete @default(N)
+  feedback_id Int                   @db.UnsignedInt
+  resource_id Int                   @db.UnsignedInt
+  info        String?               @db.Text
+  feedback    feedback              @relation(fields: [feedback_id], references: [id], onDelete: Cascade, map: "feedback_id on feedback_round")
+  resource    resource              @relation(fields: [resource_id], references: [id], onDelete: Cascade, map: "resource_id on feedback_round")
+
+  @@index([feedback_id], map: "feedback_id on feedback_round")
+  @@index([resource_id], map: "resource_id on feedback_round")
+}
+
+model poll {
+  id          Int           @id @default(autoincrement()) @db.UnsignedInt
+  createdAt   DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime?     @db.Timestamp(0)
+  delete      poll_delete   @default(N)
+  project_id  Int           @db.UnsignedInt
+  question    String        @db.VarChar(255)
+  project     project       @relation(fields: [project_id], references: [id], onDelete: Cascade, map: "project_id on poll")
+  poll_answer poll_answer[]
+
+  @@index([project_id], map: "project_id on poll")
+}
+
+model poll_answer {
+  id          Int                @id @default(autoincrement()) @db.UnsignedInt
+  createdAt   DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime?          @db.Timestamp(0)
+  delete      poll_answer_delete @default(N)
+  poll_id     Int                @db.UnsignedInt
+  answer      String             @db.VarChar(255)
+  poll        poll               @relation(fields: [poll_id], references: [id], onDelete: Cascade, map: "poll_id on poll_answer")
+  poll_voting poll_voting[]
+
+  @@index([poll_id], map: "poll_id on poll_answer")
+}
+
+model poll_voting {
+  id             Int                @id @default(autoincrement()) @db.UnsignedInt
+  createdAt      DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime?          @db.Timestamp(0)
+  delete         poll_voting_delete @default(N)
+  poll_answer_id Int                @db.UnsignedInt
+  user_id        Int                @db.UnsignedInt
+  poll_answer    poll_answer        @relation(fields: [poll_answer_id], references: [id], onDelete: Cascade, map: "poll_answer_id on poll_voting")
+  user           user               @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "uder_id on poll_voting")
+
+  @@index([poll_answer_id], map: "poll_answer_id on poll_voting")
+  @@index([user_id], map: "uder_id on poll_voting")
+}
+
+model project {
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  createdAt    DateTime       @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime?      @db.Timestamp(0)
+  delete       project_delete @default(N)
+  user_id      Int            @db.UnsignedInt
+  info_who     String?        @map("info-who") @db.Text
+  info_project String?        @db.Text
+  status       project_status @default(Pending)
+  type         project_type   @default(Poll)
+  user         user           @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user_id On project")
+  comment      comment[]
+  feedback     feedback[]
+  poll         poll[]
+
+  @@index([user_id], map: "user_id On project")
+}
+
+model resource {
+  id             Int              @id @default(autoincrement()) @db.UnsignedInt
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime?        @db.Timestamp(0)
+  delete         resource_delete  @default(N)
+  user_id        Int              @db.UnsignedInt
+  type           resource_type    @default(Image)
+  note           String?          @db.Text
+  url            String           @db.VarChar(255)
+  user           user             @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "user_id on resource")
+  feedback       feedback[]
+  feedback_round feedback_round[]
+
+  @@index([user_id], map: "user_id on resource")
+}
+
+model user {
+  id                                  Int           @id @default(autoincrement()) @db.UnsignedInt
+  createdAt                           DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt                           DateTime?     @db.Timestamp(0)
+  delete                              user_delete   @default(N)
+  username                            String        @db.VarChar(75)
+  fname                               String        @db.VarChar(75)
+  lname                               String        @db.VarChar(75)
+  bio                                 String?       @db.Text
+  bio_pic                             String?       @db.VarChar(255)
+  instagram                           String?       @db.VarChar(255)
+  youtube                             String?       @db.VarChar(255)
+  token                               String?       @db.VarChar(255)
+  terms                               user_terms    @default(N)
+  collab_collab_user_id_grantTouser   collab[]      @relation("collab_user_id_grantTouser")
+  collab_collab_user_id_requestTouser collab[]      @relation("collab_user_id_requestTouser")
+  comment                             comment[]
+  poll_voting                         poll_voting[]
+  project                             project[]
+  resource                            resource[]
+}
+
+enum beatme_delete {
+  Y
+  N
+}
+
+enum beatme_poll_delete {
+  Y
+  N
+}
+
+enum beatme_reply_delete {
+  Y
+  N
+}
+
+enum collab_delete {
+  Y
+  N
+}
+
+enum collab_status {
+  Pending
+  Accepted
+  Rejected
+}
+
+enum comment_delete {
+  Y
+  N
+}
+
+enum feedback_delete {
+  Y
+  N
+}
+
+enum feedback_round_delete {
+  Y
+  N
+}
+
+enum poll_delete {
+  Y
+  N
+}
+
+enum poll_answer_delete {
+  Y
+  N
+}
+
+enum poll_voting_delete {
+  Y
+  N
+}
+
+enum project_delete {
+  Y
+  N
+}
+
+enum project_status {
+  Pending
+  Open
+  Closed
+}
+
+enum project_type {
+  Poll
+  Feedback
+  Beat_Me @map("Beat Me")
+}
+
+enum resource_delete {
+  Y
+  N
+}
+
+enum resource_type {
+  Image
+  File
+  Video
+  Other
+}
+
+enum user_delete {
+  Y
+  N
+}
+
+enum user_terms {
+  Y
+  N
+}

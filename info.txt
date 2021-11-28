@@ -1,0 +1,28 @@
+npm install -g npm
+-g is for global
+to start a node project you do:
+npm init
+to install Express do:
+npm install express --save
+git init
+add things to .gitignore
+add nodemon to package.json
+install nodemon
+npm install -g nodemon
+to start node:
+npm start
+Add Prisma
+npm install prisma --save-dev
+npx prisma init
+Change .env
+change prisma/schema.prisma
+Get database schema with prisma
+npx prisma db pull
+
+npx prisma generate
+
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+Get bcrypt
+npm install --save bcrypt

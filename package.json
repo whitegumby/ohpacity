@@ -1,0 +1,23 @@
+{
+  "name": "ohpacity",
+  "version": "1.0.0",
+  "description": "An app for designers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^3.5.0",
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "mariadb": "^2.5.5",
+    "mysql2": "^2.3.3"
+  },
+  "type": "module",
+  "devDependencies": {
+    "prisma": "^3.5.0"
+  }
+}
