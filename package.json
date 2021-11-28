@@ -2,22 +2,29 @@
   "name": "ohpacity",
   "version": "1.0.0",
   "description": "An app for designers",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ."
+    "start": "nodemon .",
+    "lint": "eslint ./ --fix"
   },
-  "author": "",
+  "author": "Zayne Mayfield",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^3.5.0",
     "bcrypt": "^5.0.1",
     "express": "^4.17.1",
     "mariadb": "^2.5.5",
-    "mysql2": "^2.3.3"
+    "validator": "^13.7.0"
   },
   "type": "module",
   "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "eslint-plugin-vue": "^8.1.1",
     "prisma": "^3.5.0"
   }
 }

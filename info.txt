@@ -24,5 +24,15 @@ npx prisma generate
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
+npm install @prisma/client
+
 Get bcrypt
 npm install --save bcrypt
+
+get validator
+npm install validator
+
+get eslint
+npm install eslint --save-dev
+Set-ExecutionPolicy RemoteSigned
+.\node_modules\.bin\eslint --init
